@@ -6,7 +6,7 @@ import pygame
 # Game Variables
 gravity = 0.25
 bird_movement = 0
-game_active = True
+game_active = False
 score = 0
 high_score = 0
 
@@ -71,7 +71,7 @@ def score_display(game_state):
         screen.blit(score_surface, score_rect)
 
         high_score_surface = game_font.render(
-            f"Hogh score: {int(high_score)}", True, (255, 255, 255)
+            f"High score: {int(high_score)}", True, (255, 255, 255)
         )
         high_score_rect = high_score_surface.get_rect(center=(288, 850))
         screen.blit(high_score_surface, high_score_rect)
@@ -122,6 +122,11 @@ if __name__ == "__main__":
     pygame.time.set_timer(SPAWNPIPE, 1200)
     pipe_height = [400, 600, 800]
 
+    game_over_surface = pygame.transform.scale2x(
+        pygame.image.load("assets/message.png").convert_alpha()
+    )
+    game_over_rect = game_over_surface.get_rect(center=(288, 512))
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -167,6 +172,7 @@ if __name__ == "__main__":
             score += 0.01
             score_display("main_game")
         else:
+            screen.blit(game_over_surface, game_over_rect)
             high_score = update_score(score, high_score)
             score_display("game_over")
 
