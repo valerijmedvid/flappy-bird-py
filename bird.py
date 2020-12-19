@@ -6,6 +6,7 @@ import pygame
 # Game Variables
 gravity = 0.25
 bird_movement = 0
+game_active = True
 
 
 def draw_floor():
@@ -33,6 +34,17 @@ def draw_pipes(pipes):
         else:
             flip_pipe = pygame.transform.flip(pipe_surface, False, True)
             screen.blit(flip_pipe, pipe)
+
+
+def check_collision(pipes):
+    for pipe in pipes:
+        if bird_rect.colliderect(pipe):
+            return False
+
+    if bird_rect.top <= -100 or bird_rect.bottom >= 900:
+        return False
+
+    return True
 
 
 if __name__ == "__main__":
@@ -74,14 +86,16 @@ if __name__ == "__main__":
 
         screen.blit(bg_surface, (0, 0))
 
-        # Pipes
-        pipe_list = move_pipes(pipe_list)
-        draw_pipes(pipe_list)
+        if game_active:
+            # Bird
+            bird_movement += gravity
+            bird_rect.centery += bird_movement
+            screen.blit(bird_surface, bird_rect)
+            game_active = check_collision(pipe_list)
 
-        # Bird
-        bird_movement += gravity
-        bird_rect.centery += bird_movement
-        screen.blit(bird_surface, bird_rect)
+            # Pipes
+            pipe_list = move_pipes(pipe_list)
+            draw_pipes(pipe_list)
 
         # Floor
         floor_x_pos -= 1
