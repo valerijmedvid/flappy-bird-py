@@ -47,6 +47,11 @@ def check_collision(pipes):
     return True
 
 
+def rotate_bird(bird):
+    new_bird = pygame.transform.rotozoom(bird, -bird_movement * 3, 1)
+    return new_bird
+
+
 if __name__ == "__main__":
     pygame.init()
 
@@ -61,7 +66,7 @@ if __name__ == "__main__":
     floor_surface = pygame.transform.scale2x(floor_surface)
     floor_x_pos = 0
 
-    bird_surface = pygame.image.load("assets/yellowbird-midflap.png").convert()
+    bird_surface = pygame.image.load("assets/yellowbird-midflap.png").convert_alpha()
     bird_surface = pygame.transform.scale2x(bird_surface)
     bird_rect = bird_surface.get_rect(center=(100, 512))
 
@@ -78,9 +83,15 @@ if __name__ == "__main__":
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE and game_active:
                     bird_movement = 0
                     bird_movement -= 10
+                if event.key == pygame.K_SPACE and game_active == False:
+                    game_active = True
+                    pipe_list.clear()
+                    bird_rect.center = (100, 512)
+                    bird_movement = 0
+
             if event.type == SPAWNPIPE:
                 pipe_list.extend(create_pipe())
 
@@ -89,8 +100,9 @@ if __name__ == "__main__":
         if game_active:
             # Bird
             bird_movement += gravity
+            rotated_bird = rotate_bird(bird_surface)
             bird_rect.centery += bird_movement
-            screen.blit(bird_surface, bird_rect)
+            screen.blit(rotated_bird, bird_rect)
             game_active = check_collision(pipe_list)
 
             # Pipes
